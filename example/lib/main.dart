@@ -32,6 +32,7 @@ class CameraPage extends StatelessWidget {
       body: Container(
         color: Colors.white,
         child: CameraAwesomeBuilder.awesome(
+          contextFromOutsad: (s) => null,
           saveConfig: SaveConfig.photoAndVideo(
             initialCaptureMode: CaptureMode.photo,
             mirrorFrontCamera: true,
