@@ -32,10 +32,45 @@ class CameraPage extends StatelessWidget {
       body: Container(
         color: Colors.white,
         child: CameraAwesomeBuilder.awesome(
-          contextFromOutsad: (s) => null,
+          onMediaCaptureEvent: (event) {
+            //  switch ((event.status, event.isPicture, event.isVideo)) {
+            // case (MediaCaptureStatus.capturing, true, false):
+            //   debugPrint('Capturing picture...');
+
+            // case (MediaCaptureStatus.success, true, false):
+            //   event.captureRequest.when(
+            //     single: (single) {
+            //       debugPrint('Picture saved: ${single.file?.path}');
+            //     },
+            //     multiple: (multiple) {
+            //       multiple.fileBySensor.forEach((key, value) {
+            //         debugPrint('multiple image taken: $key ${value?.path}');
+            //       });
+            //     },
+            //   );
+            // case (MediaCaptureStatus.failure, true, false):
+            //   debugPrint('Failed to capture picture: ${event.exception}');
+            // case (MediaCaptureStatus.capturing, false, true):
+            //   debugPrint('Capturing video...');
+            // case (MediaCaptureStatus.success, false, true):
+            //   event.captureRequest.when(
+            //     single: (single) {
+            //       debugPrint('Video saved: ${single.file?.path}');
+            //     },
+            //     multiple: (multiple) {
+            //       multiple.fileBySensor.forEach((key, value) {
+            //         debugPrint('multiple video taken: $key ${value?.path}');
+            //       });
+            //     },
+            //   );
+            // case (MediaCaptureStatus.failure, false, true):
+            //   debugPrint('Failed to capture video: ${event.exception}');
+            // default:
+            //   debugPrint('Unknown event: $event');
+            //    }
+          },
           saveConfig: SaveConfig.photoAndVideo(
             initialCaptureMode: CaptureMode.photo,
-            mirrorFrontCamera: true,
             photoPathBuilder: (sensors) async {
               final Directory extDir = await getTemporaryDirectory();
               final testDir = await Directory(
@@ -45,16 +80,15 @@ class CameraPage extends StatelessWidget {
                 final String filePath =
                     '${testDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
                 return SingleCaptureRequest(filePath, sensors.first);
-              } else {
-                // Separate pictures taken with front and back camera
-                return MultipleCaptureRequest(
-                  {
-                    for (final sensor in sensors)
-                      sensor:
-                          '${testDir.path}/${sensor.position == SensorPosition.front ? 'front_' : "back_"}${DateTime.now().millisecondsSinceEpoch}.jpg',
-                  },
-                );
               }
+              // Separate pictures taken with front and back camera
+              return MultipleCaptureRequest(
+                {
+                  for (final sensor in sensors)
+                    sensor:
+                        '${testDir.path}/${sensor.position == SensorPosition.front ? 'front_' : "back_"}${DateTime.now().millisecondsSinceEpoch}.jpg',
+                },
+              );
             },
             videoOptions: VideoOptions(
               enableAudio: true,
@@ -76,6 +110,7 @@ class CameraPage extends StatelessWidget {
           ),
           enablePhysicalButton: true,
           // filter: AwesomeFilter.AddictiveRed,
+          previewAlignment: Alignment.center,
           previewFit: CameraPreviewFit.contain,
           onMediaTap: (mediaCapture) {
             mediaCapture.captureRequest.when(
